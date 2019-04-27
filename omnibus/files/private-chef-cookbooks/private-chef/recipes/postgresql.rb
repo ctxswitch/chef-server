@@ -77,7 +77,6 @@ File.open("/dotfiles/node.json", "w") do |f| f.write node.to_json end
 
 component_runit_service "postgresql" do
   control ['t']
-  action :enable
 end
 
 # NOTE: These recipes are written idempotently, but require a running
