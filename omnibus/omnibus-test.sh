@@ -61,7 +61,7 @@ y/8SReCpC71R+Vl6d4+Dw6GFdL+6k6W558dPfq3UeV8HPWQEaM7/jXDUKJZ0tB6a
 -----END DH PARAMETERS-----
 " | sudo tee /etc/opscode/dhparam.pem
 
-sudo chef-server-ctl reconfigure  --chef-license=accept || true
+sudo chef-server-ctl reconfigure --chef-license accept || true
 sleep 120
 
 echo ""
