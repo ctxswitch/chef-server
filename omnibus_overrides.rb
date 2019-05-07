@@ -7,8 +7,8 @@ override :lua, version: "5.1.5"
 override :rubygems, version: "3.0.2"
 override :bundler, version: '~> 1.17'
 override :'omnibus-ctl', version: "master"
-override :chef, version: "license_acceptance"
-override :ohai, version: "v15.0.32"
+override :chef, version: "v15.0.269"
+override :ohai, version: "v15.0.34"
 override :ruby, version: "2.5.5"
 override :rubygems, version: "2.7.7"
 
