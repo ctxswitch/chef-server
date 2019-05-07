@@ -23,7 +23,7 @@ license_file "http://www.apache.org/licenses/LICENSE-2.0"
 
 skip_transitive_dependency_licensing true
 
-source git: "git@github.com:chef/license-acceptance.git"
+source git: "https://github.com/chef/license-acceptance.git"
 
 
 dependency "ruby"
