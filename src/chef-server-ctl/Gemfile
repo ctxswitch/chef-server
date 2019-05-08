@@ -8,8 +8,8 @@ gem "veil", git: "https://github.com/chef/chef_secrets.git"
 gem "toml" # for habitat-land
 
 # remove these once we have released chef 15; we can go back to using gems
-gem "chef", git: "https://github.com/chef/chef.git", branch: "license_acceptance" 
+gem "chef", git: "https://github.com/chef/chef.git", branch: "v15.0.269"
 gem "ohai", git: "https://github.com/chef/ohai.git"
-gem "license-acceptance", git: "https://github.com/chef/license-acceptance.git", glob: "components/ruby/*.gemspec"
+
 
 
