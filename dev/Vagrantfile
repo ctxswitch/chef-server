@@ -210,6 +210,7 @@ def define_chef_server(config, attributes)
     config.vm.synced_folder installer_path, "/installers"
     config.vm.synced_folder File.expand_path(dotfiles_path), "/dotfiles"
 
+
     # Preserve gitconfig from host
     config.vm.provision "file", source: "~/.gitconfig", destination: ".gitconfig"
     # Install the chef-server package now so that its chef client is available to us
@@ -232,7 +233,7 @@ def define_chef_server(config, attributes)
     # We do a number of things that can affect the initial configuration - by
     # running reconfigure here we can ensure that they're all completed
     # first  -- no matter what kind of pre-reconfigure provisioning we doing.
-    config.vm.provision "shell", inline: "chef-server-ctl reconfigure  --chef-license accept"
+    config.vm.provision "shell", inline: "chef-server-ctl reconfigure --verbose  --chef-license accept"
 
     if plugin_active?('chef-manage', attributes)
       config.vm.provision "shell", "inline": install_hack(m_installer, 'chef-manage')
@@ -313,7 +314,7 @@ def define_external_solr_server(config, attributes)
   config.vm.provision "file", source: "../omnibus/files/private-chef-cookbooks/private-chef/files/default/solr4/schema.xml", destination: "/home/vagrant/solr-4.10.4/example/solr/collection1/conf/schema.xml"
   config.vm.provision "file", source: "../omnibus/files/private-chef-cookbooks/private-chef/files/default/solr4/solr.xml", destination: "/home/vagrant/solr-4.10.4/example/solr/solr.xml"
   config.vm.provision "shell", path: "scripts/restart-solr.sh"
-  
+
 end
 
 def define_backend_server(config, attribute)
@@ -553,5 +554,3 @@ def customize_vm(config, opts)
     vb.customize ["storagectl", :id, "--name", "SATA Controller", "--hostiocache", "on"]
   end
 end
-
-
