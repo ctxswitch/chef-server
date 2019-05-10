@@ -30,7 +30,7 @@ dependency "runit"
 dependency "chef_backup-gem" # chef-server-ctl backup
 dependency "veil-gem" # chef-server-ctl rotate-credentials
 dependency "erlang-crypto2"
-dependency "openssl-fips-config" if fips_mode? 
+dependency "openssl-fips-config" if fips_mode?
 
 # the backend
 dependency "postgresql92-bin" # for upgrading 9.2 -> 9.6
@@ -51,7 +51,6 @@ dependency "knife-opc-gem"
 # use when verifying add ons
 dependency "gpg-key"
 
-dependency "keepalived"
 dependency "bookshelf"
 
 # the front-end services
@@ -84,4 +83,3 @@ dependency "oc_erchef"
 dependency "oc-chef-pedant"
 dependency "private-chef-upgrades"
 dependency "private-chef-cookbooks"
-dependency "chef-ha-plugin-config"

@@ -310,59 +310,6 @@ EOF
       end.flatten.compact
     end
 
-    def gen_hapaths
-      PrivateChef["ha"]["provider"] ||= "drbd" # Use drbd by default for HA
-      PrivateChef["enabled_plugins"] << "chef-ha-#{PrivateChef["ha"]["provider"]}"
-      PrivateChef["ha"]["path"] ||= "/var/opt/opscode/drbd/data"
-      hapath = PrivateChef["ha"]["path"]
-      PrivateChef["bookshelf"]["data_dir"] = "#{hapath}/bookshelf"
-      PrivateChef["rabbitmq"]["data_dir"] ||= "#{hapath}/rabbitmq"
-      PrivateChef["opscode_solr4"]["data_dir"] ||= "#{hapath}/opscode-solr4"
-      PrivateChef["redis_lb"]["data_dir"] ||= "#{hapath}/redis_lb"
-
-      # cleanup back-compat
-      # in order to delete the data directories for opscode-solr and couchdb
-      # after installing Chef Server 12, we need to have access to the configuration
-      # data as if it were configured for Enterprise Chef 11.
-      PrivateChef["couchdb"]["data_dir"] = "#{hapath}/couchdb"
-      PrivateChef["opscode_solr"]["data_dir"] = "#{hapath}/opscode-solr"
-
-      # The postgresql data directory is scoped to the current version;
-      # changes in the directory trigger upgrades from an old PostgreSQL
-      # version to a newer one
-      PrivateChef["postgresql"]["data_dir"] ||= "#{hapath}/postgresql_#{node['private_chef']['postgresql']['version']}"
-
-      # Need old path for cookbook migration
-      PrivateChef["opscode_chef"]["checksum_path"] ||= "#{hapath}/opscode-chef/checksum"
-    end
-
-    def gen_keepalived(node_name)
-      PrivateChef["servers"].each do |k, v|
-        next unless v["role"] == "backend"
-        next if k == node_name
-        PrivateChef["servers"][node_name]["peer_ipaddress"] = v["ipaddress"]
-      end
-      PrivateChef["keepalived"]["enable"] ||= true
-      PrivateChef["keepalived"]["ipv6_on"] ||= PrivateChef["use_ipv6"]
-      PrivateChef["keepalived"]["vrrp_instance_interface"] = backend_vip["device"]
-      PrivateChef["keepalived"]["vrrp_instance_ipaddress"] = backend_vip["ipaddress_with_netmask"]
-      PrivateChef["keepalived"]["vrrp_instance_ipaddress_dev"] = backend_vip["device"]
-      PrivateChef["keepalived"]["vrrp_instance_vrrp_unicast_bind"] = PrivateChef["servers"][node_name]["ipaddress"]
-      PrivateChef["keepalived"]["vrrp_instance_vrrp_unicast_peer"] = PrivateChef["servers"][node_name]["peer_ipaddress"]
-      PrivateChef["keepalived"]["vrrp_instance_ipaddress_dev"] = backend_vip["device"]
-      PrivateChef["bookshelf"]["ha"] ||= true
-      PrivateChef["oc_id"]["ha"] ||= true
-      PrivateChef["rabbitmq"]["ha"] ||= true
-      PrivateChef["opscode_solr4"]["ha"] ||= true
-      PrivateChef["opscode_expander"]["ha"] ||= true
-      PrivateChef["opscode_erchef"]["ha"] ||= true
-      PrivateChef["lb"]["ha"] ||= true
-      PrivateChef["postgresql"]["ha"] ||= true
-      PrivateChef["redis_lb"]["ha"] ||= true
-      PrivateChef["oc_bifrost"]["ha"] ||= true
-      PrivateChef["nginx"]["ha"] ||= true
-    end
-
     #
     # Genereric gen_ callbacks
     #
@@ -646,10 +593,6 @@ WARN
       case me["role"]
       when "backend"
         gen_backend(me["bootstrap"])
-        # TODO(ssd): Move these into gen_backend callback for HA
-        # plugin once that is split out
-        gen_hapaths if topology == "ha"
-        gen_keepalived(node_name) if topology == "ha"
         gen_api_fqdn
       when "frontend"
         gen_frontend
@@ -743,8 +686,7 @@ WARN
 
     # True if the given topology requires per-server config via `server` blocks
     def server_config_required?
-      PrivateChef["topology"] == "ha" ||
-        PrivateChef["topology"] == "tier" ||
+      PrivateChef["topology"] == "tier" ||
         (PrivateChef["registered_extensions"][PrivateChef["topology"]] &&
          PrivateChef["registered_extensions"][PrivateChef["topology"]][:server_config_required])
     end
