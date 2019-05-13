@@ -436,16 +436,6 @@ EOF
     end
 
     def gen_secrets_default(node_name)
-      # Sanity check:  don't generate secrets if we're in an HA cluster and are not the bootstap node.
-      unless File.exists? secrets_json
-        if  PrivateChef["topology"] == "ha" && !PrivateChef["servers"][node_name]["bootstrap"]
-          Chef::Log.fatal("In an H/A topology the secrets must be created on the bootstrap node. "\
-                          "Please copy the contents of /etc/opscode/ from your bootstrap Server " \
-                          "to complete the setup")
-          exit(44)
-        end
-      end
-
       # TODO
       # Transition from erchef's sql_user/password etc living under 'postgresql'
       # in older versions to 'opscode_erchef' in newer versions
